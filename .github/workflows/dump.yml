@@ -27,6 +27,17 @@ jobs:
           DUMP_PAT: ${{ secrets.DUMP_PAT }}
         run: python scripts/github_full_dump.py
 
+      - name: Install Drive upload dependencies
+        run: pip install --quiet google-auth google-api-python-client
+
+      - name: Upload new chunk to Google Drive
+        env:
+          GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
+          GDRIVE_FOLDER_ID: ${{ vars.GDRIVE_FOLDER_ID }}
+        run: |
+          LATEST_FILE=$(ls -t data/*.jsonl | head -1)
+          python scripts/upload_to_drive.py "$LATEST_FILE"
+
       - name: Commit and push results
         run: |
           git config user.name "github-actions[bot]"
