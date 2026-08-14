@@ -31,6 +31,7 @@ jobs:
         run: pip install --quiet google-auth google-api-python-client
 
       - name: Upload new chunk to Google Drive
+        continue-on-error: true
         env:
           GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
           GDRIVE_FOLDER_ID: ${{ vars.GDRIVE_FOLDER_ID }}
@@ -39,6 +40,7 @@ jobs:
           python scripts/upload_to_drive.py "$LATEST_FILE"
 
       - name: Commit and push results
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
